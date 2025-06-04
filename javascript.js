@@ -2,35 +2,26 @@ let displayValue = ""
 let operation = ""
 let a = ""
 let b = ""
-let lastOperation = ""
+let lastOperator = ""
 let lastOperand = ""
 const result = document.querySelector(".result")
+
 function operate(a, b, operation) {
-    if (a == "" || b == "") {
-        displayValue = "Error"
-    }
-    console.log(a, b, operation)
+    if (a == "" || b == "") return "Error";
 
     switch (operation) {
         case "÷":
-            if (+b === 0) {
-                displayValue = "Error"
-            } else {
-                displayValue = +a / +b
-            }
-            break
+            return +b === 0 ? "Error" : +a / +b;
         case "×":
-            displayValue = +a * +b
-            break
+            return +a * +b;
         case "+":
-            displayValue = +a + +b
-            break
+            return +a + +b;
         case "-":
-            displayValue = +a - +b
-            break
+            return +a - +b;
+        default:
+            return "Error";
     }
 }
-
 document.querySelectorAll('button').forEach((button) => {
     const value = button.textContent
     if (!isNaN(value) || value === ".") {
@@ -55,20 +46,18 @@ document.querySelectorAll('button').forEach((button) => {
             result.textContent = displayValue
         })
 
-    } else if (value == "÷" || value == "×" || value == "-" || value == "+") {
+    } else if (["÷", "×", "-", "+"].includes(value)) {
         button.addEventListener("click", button => {
             if (a !== "" && operation !== "" && displayValue !== "0") {
                 b = displayValue;
-                operate(a, b, operation);
-                a = displayValue;
+
+                a = operate(a, b, operation);
                 b = "";
             }
 
-            console.log("pressed syumbo")
+
             if (a == "") {
                 a = displayValue
-            } else if (b == "") {
-                b = displayValue
             }
             operation = value
             displayValue = "0"
@@ -80,21 +69,22 @@ document.querySelectorAll('button').forEach((button) => {
         button.addEventListener("click", button => {
             if (operation && a !== "" && displayValue !== "") {
                 b = displayValue;
-                operate(a, b, operation);
-                result.textContent = displayValue;
 
-                lastOperator = operation;
-                lastOperand = b;
+                displayValue = operate(a, b, operation)
+                result.textContent = displayValue
+                lastOperator = operation
+                lastOperand = b
 
-                a = displayValue;
-                b = "";
-                operation = "";
+                a = displayValue
+                b = ""
+                operation = ""
             }
-            // 
+
             else if (lastOperator && lastOperand) {
-                operate(a, lastOperand, lastOperator);
-                result.textContent = displayValue;
-                a = displayValue;
+
+                displayValue = operate(a, lastOperand, lastOperator)
+                result.textContent = displayValue
+                a = displayValue
             }
         })
 
